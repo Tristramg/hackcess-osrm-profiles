@@ -9,7 +9,7 @@
 -- Begin of globals
 
 bollards_whitelist = { [""] = true, ["border_control"] = true, ["toll_booth"] = true, ["sally_port"] = true, ["gate"] = true, ["entrance"] = true, ["turnstile"] = true}
-access_tag_whitelist = { ["yes"] = true, ["foot"] = true, ["permissive"] = true, ["designated"] = true, ["wheelchair"] = true }
+access_tag_whitelist = { ["yes"] = true, ["foot"] = true, ["permissive"] = true, ["designated"] = true, ["wheelchair"] = true, ["virtual"] = true }
 access_tag_blacklist = { ["no"] = true, ["private"] = true, ["agricultural"] = true, ["forestery"] = true }
 access_tag_restricted = { ["destination"] = true, ["delivery"] = true }
 access_tags = { "foot", "wheelchair" }
