@@ -5,19 +5,14 @@ require("lib/access")
 block_steps = true
 block_escalator = true
 block_elevator = true
-block_no_wheelchair_entrance = true
+for_wheelchair = true
 
 function is_steps(way)
 	local highway = way.tags:Find("highway")
     local conveying = way.tags:Find("conveying")
 
     -- We do not want to block escalators that are highway=steps and conveying=something
-    if highway=="steps" and conveying==nil then
-        return true
-    else
-        return false
-    end
-    return true
+    return highway=="steps" and conveying==nil
 end
 
 function is_escalator(way)
@@ -25,11 +20,7 @@ function is_escalator(way)
     local conveying = way.tags:Find("conveying")
 
     -- Escalators are just steps that convey
-    if highway=="steps" and conveying ~= nil then
-        return true
-    else
-        return false
-    end
+    return highway=="steps" and conveying ~= nil
 end
 
 function is_elevator(node_or_way)
@@ -37,19 +28,21 @@ function is_elevator(node_or_way)
     return highway=="elevator"
 end
 
-function is_no_wheelchair_entrance(node)
-    return false
+function is_no_wheelchair(node_or_way)
+    local wheelchair = node_or_way.tags:Find("wheelchair")
+    return wheelchair=="no"
 end
 
 function noway_block_way(way)
     return (block_steps and is_steps(way)) or
            (block_escalator and is_escalator(way)) or
-           (block_elevator and is_elevator(way))
+           (block_elevator and is_elevator(way)) or
+           (for_wheelchair and is_no_wheelchair(way))
 end
 
 function noway_block_node(node)
     return (block_elevator and is_elevator(node)) or
-           (block_no_wheelchair_entrance and is_no_wheelchair_entrance(node))
+           (for_wheelchair and is_no_wheelchair(node))
 end
 
 -- Fin de la configuration spécifique
@@ -196,6 +189,7 @@ function way_function (way)
 	local area = way.tags:Find("area")
 	local foot = way.tags:Find("foot")
 	local surface = way.tags:Find("surface")
+	local wheelchair = way.tags:Find("wheelchair")
 
  	-- name
 	if "" ~= ref and "" ~= name then
@@ -259,6 +253,10 @@ function way_function (way)
             way.speed = math.min(way.speed, surface_speed)
             way.backward_speed  = math.min(way.backward_speed, surface_speed)
         end
+    end
+
+    if wheelchair and for_wheelchair and wheelchair=="yes" then
+        way.speed = way.speed * 1.1
     end
 
   	way.type = 1
