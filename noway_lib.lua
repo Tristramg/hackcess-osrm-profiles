@@ -12,7 +12,7 @@ function is_steps(way)
     local conveying = way.tags:Find("conveying")
 
     -- We do not want to block escalators that are highway=steps and conveying=something
-    return highway=="steps" and conveying==nil
+    return highway=="steps" and (conveying==nil or conveying=='')
 end
 
 function is_escalator(way)
@@ -20,7 +20,7 @@ function is_escalator(way)
     local conveying = way.tags:Find("conveying")
 
     -- Escalators are just steps that convey
-    return highway=="steps" and conveying ~= nil
+    return highway=="steps" and conveying ~= nil and conveying ~=''
 end
 
 function is_elevator(node_or_way)
